@@ -1,19 +1,25 @@
 import numpy as np 
 
 class Linear():
-    def __init__(self, input_features, output_features):
+    def __init__(self, input_features, output_features, learningRate):
         self.input_features = input_features
         self.output_features = output_features
+        self.learningRate = learningRate
         self.weights = np.zeros((self.input_features, self.output_features))
 
     def forward(self, input_x):
-        x_batch = input_x.shape[0]
-        input_x = input_x.T
-        out = np.dot(input_x, self.weights) # X^T * W
-        return out
+        output_x = np.dot(input_x, self.weights) # X^T * W
+        self.input_x = input_x # shape(1, input_features)
+        #self.output_x = output_x
+        return output_x
 
-    def backward(self, grad):
-        self.weights = self.weights - grad
+    def backward(self, self_grad):
+        #grad_weigths = np.zeros((self.input_features, self.output_features))
+        #for i in range(self.input_features):
+        #    for j in range(self.output_features):
+        #        grad_weigths[i,j] = self.input_x[0,i] * self_grad[0,j]
+        grad_weigths = np.dot(self.input_x.T, self_grad)
+        self.weights = self.weights - learningRate * grad_weigths
 
 class Function():
     def __init__(self):
@@ -26,6 +32,37 @@ class Function():
 
 
 
-
 class ANN():
-    def __init__(self,):
+    def __init__(self, input_size, hidden_size1, hidden_size2, output_size, learningRate):
+        self.input_size = input_size
+        self.hidden_size1 = hidden_size1
+        self.hidden_size2 = hidden_size2
+        self.output_size = output_size
+        self.learningRate = learningRate
+        self.fc1 = Linear(self.input_size, self.hidden_size1, self.learningRate)
+        self.fc2 = Linear(self.hidden_size1, self.hidden_size2, self.learningRate)
+        self.fc3 = Linear(self.hidden_size2, self.output_size, self.learningRate)
+
+    def forward(self, input_x):
+        sigmoid = Function()
+        fc1_out = sigmoid.forward( self.fc1.forward(input_x) )
+        fc2_out = sigmoid.forward( self.fc2.forward(fc1_out) )
+        fc3_out = self.fc3.forward(fc2_out)
+        self.fc1_out = fc1_out
+        self.fc2_out = fc2_out
+        self.fc3_out = fc3_out
+        return fc3_out
+
+    def backward(self, label):
+        fc3_self_grad = -(label - self.fc3_out) # MSEloss
+        self.fc3.backward(fc3_self_grad)
+        fc2_self_grad = np.dot(fc3_self_grad, self.fc3.weights.T) * sigmoid.backward(self.fc2_out)
+        self.fc2.backward(fc2_self_grad)
+        fc1_self_grad = np.dot(fc2_self_grad, self.fc2.weights.T) * sigmoid.backward(self.fc1_out)
+        self.fc1.backward(fc1_self_grad)
+
+
+    
+
+
+
