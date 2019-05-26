@@ -39,7 +39,8 @@ def train(ann, inputs, label):
 if __name__ =='__main__':
     myAnn = Ann.ANN(INPUT_SIZE, HIDDEN_SIZE1, HIDDEN_SIZE2, OUTPUT_SIZE, learningRate)
     out = train(myAnn, inputs, label)
-    plt.plot(steps[3:27], out.flatten(), 'r-', label = 'predict_data')
+    plt.plot(steps[3:27], temp_inputs[3:27].flatten(), 'g-', label = 'input_data')
+    plt.plot(steps[3:27], out.flatten(), 'r-', label = 'output_data')
     plt.plot(steps[3:27], label.flatten(), 'b-', label = 'label')
     plt.legend()
     plt.title('Use sin(x) predict cos(x)')
