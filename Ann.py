@@ -22,6 +22,7 @@ class Linear():
 class Function(): # 激活函数sigmoid
     def __init__(self):
         pass
+        
     def forward(self, input_x):
         sigmoid_x = 1/(1 + np.exp(-input_x))
         return sigmoid_x # sigmoid
