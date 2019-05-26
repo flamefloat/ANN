@@ -8,15 +8,18 @@ class Linear():
         self.weights = np.zeros((self.input_features, self.output_features))
 
     def forward(self, input_x):
-        output_x = np.dot(input_x, self.weights) # X^T * W
+        output_x = np.dot(input_x, self.weights) # X^T * W，无偏置
         self.input_x = input_x # shape(1, input_features)
         return output_x
 
     def backward(self, self_grad):
+        """
+        self_grad:神经元的局部梯度
+        """
         grad_weigths = np.dot(self.input_x.T, self_grad)
         self.weights = self.weights - self.learningRate * grad_weigths
 
-class Function():
+class Function(): # 激活函数sigmoid
     def __init__(self):
         pass
     def forward(self, input_x):
@@ -52,8 +55,8 @@ class ANN():
 
     def backward(self, label):
         fc3_self_grad = -(label - self.fc3_out) # MSEloss
-        self.fc3.backward(fc3_self_grad) # 链式法则求梯度
-        fc2_self_grad = np.dot(fc3_self_grad, self.fc3.weights.T) * self.sigmoid.backward(self.fc2_out)
+        self.fc3.backward(fc3_self_grad) 
+        fc2_self_grad = np.dot(fc3_self_grad, self.fc3.weights.T) * self.sigmoid.backward(self.fc2_out) # 链式法则求梯度
         self.fc2.backward(fc2_self_grad)
         fc1_self_grad = np.dot(fc2_self_grad, self.fc2.weights.T) * self.sigmoid.backward(self.fc1_out)
         self.fc1.backward(fc1_self_grad)
